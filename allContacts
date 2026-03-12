@@ -1,0 +1,41 @@
+let
+
+```
+// aqui estou unindo todas as páginas de contatos
+// cada consulta representa uma página da API
+
+Fonte = Table.Combine(
+
+    {
+        #"contacts[1]",
+        #"contacts[2]",
+        #"contacts[3]"
+    }
+
+),
+
+// definindo tipos das colunas
+
+#"Tipo Alterado" = Table.TransformColumnTypes(
+
+    Fonte,
+    {
+        {"email", type text},
+        {"id", Int64.Type},
+        {"emailBlacklisted", Int64.Type}
+    }
+
+),
+
+// removendo registros onde o email é nulo ou vazio
+
+#"Linhas Filtradas" = Table.SelectRows(
+
+    #"Tipo Alterado",
+    each [email] <> null and [email] <> ""
+
+)
+```
+
+in
+#"Linhas Filtradas"
