@@ -1,0 +1,49 @@
+let
+
+```
+// terceira página de contatos
+
+// offset=2000 faz a API pular os primeiros 2000 registros
+// retornando os próximos contatos
+
+Source = Json.Document(
+
+    Web.Contents(
+
+        "https://api.brevo.com/v3/contacts?limit=1000&offset=2000",
+
+        [
+            Headers = [
+
+                #"api-key" = "DIGITE_SUA_CHAVE"
+
+            ]
+        ]
+
+    )
+),
+
+contacts = Source[contacts],
+
+#"Tabela" = Table.FromList(
+
+    contacts,
+    Splitter.SplitByNothing(),
+    {"Column1"},
+    null,
+    ExtraValues.Error
+
+),
+
+#"Expandido" = Table.ExpandRecordColumn(
+
+    #"Tabela",
+    "Column1",
+    {"email","id","emailBlacklisted","smsBlacklisted","createdAt","modifiedAt"},
+    {"email","id","emailBlacklisted","smsBlacklisted","createdAt","modifiedAt"}
+
+)
+```
+
+in
+#"Expandido"
