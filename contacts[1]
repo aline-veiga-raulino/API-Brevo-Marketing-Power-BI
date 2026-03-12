@@ -1,0 +1,58 @@
+let
+
+```
+// aqui estou chamando a API da Brevo
+// endpoint /contacts que retorna os contatos da conta
+
+// estou usando limit=1000 para buscar até 1000 contatos por requisição
+// essa é a primeira página de resultados
+
+Source = Json.Document(
+
+    Web.Contents(
+
+        "https://api.brevo.com/v3/contacts?limit=1000",
+
+        [
+            Headers = [
+
+                // chave de autenticação da API
+                #"api-key" = "DIGITE_SUA_CHAVE"
+
+            ]
+        ]
+
+    )
+),
+
+// dentro do JSON retornado existe o campo "contacts"
+// ele contém a lista de contatos
+
+contacts = Source[contacts],
+
+// aqui estou transformando a lista de contatos em uma tabela
+
+#"Tabela" = Table.FromList(
+
+    contacts,
+    Splitter.SplitByNothing(),
+    {"Column1"},
+    null,
+    ExtraValues.Error
+
+),
+
+// expandindo os campos do registro de cada contato
+
+#"Expandido" = Table.ExpandRecordColumn(
+
+    #"Tabela",
+    "Column1",
+    {"email","id","emailBlacklisted","smsBlacklisted","createdAt","modifiedAt"},
+    {"email","id","emailBlacklisted","smsBlacklisted","createdAt","modifiedAt"}
+
+)
+```
+
+in
+#"Expandido"
